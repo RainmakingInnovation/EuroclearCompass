@@ -2403,7 +2403,7 @@
                 });
               });
   
-              var countries = leftG
+              /*var countries = leftG
                 .selectAll(".country")
                 .data(json.features)
                 .enter()
@@ -2413,7 +2413,7 @@
                 .attr("id", function(d) {
                   return "country_" + d.properties.name.replace(/ /g, "-");
                 })
-                .attr("fill", "#EFEFEF");
+                .attr("fill", "#EFEFEF");*/
   
               json.features.forEach(function(w) {
                 w.properties.startups = 0;
