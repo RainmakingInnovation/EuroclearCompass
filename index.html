@@ -1668,6 +1668,10 @@
               return d["Founded"] !== "";
             });
 
+            data = data.filter(function(d) {
+              return +d["Founded"] >= 2000;
+            });
+
             data_city = d3
             .nest()
             .key(function(d) {
@@ -5136,8 +5140,9 @@
                   nodes_acquired.attr("opacity", 0.3);
                 } */
               if (type === "color") {
+                console.log(data)
                 nodes.attr("opacity", function(d) {
-                  if (fundingCategoryScale(d["Funding Stage"]) === data) {
+                  if (fundingCategoryScale(d["Total Funding (USD)"]) === data) {
                     return 1;
                   } else {
                     return 0.3;
