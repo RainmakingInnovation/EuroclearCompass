@@ -1561,7 +1561,7 @@
           .style("display", "none")
   
         d3.csv(
-          "EuroClear Project Hub.xlsx - Cleaned Data.csv"
+          "EuroClear Project Hub.xlsx - Compass - Startup Bank.csv"
         ).then(function(data) {
           d3.csv(
           "EduardoData - EngieRadar-Definitions.csv"
@@ -2651,17 +2651,13 @@
               .key(function(d) {
                 return d["Super Clusters"]
               })
-              .sortKeys(function(a,b) {
-                return d3.ascending(a, b)
+                .key(function(d) {
+                return d["Clusters"]
               })
               .entries(data)
-
-
-            tempOrder.forEach(function(v) {
-              v.values.sort(function(a, b) {
-                return d3.ascending(+a["Super Cluster Number"], +b["Super Cluster Numbere"])
+              .sort(function(a, b) {
+                return d3.ascending(+a.values[0]['Super Cluster Number'], +b.values[0]['Super Cluster Number'])
               })
-            })
 
             console.log(tempOrder)
 
@@ -2670,7 +2666,7 @@
             tempOrder.forEach(function(v) {
               themeOrder.push(v.key)
               v.values.forEach(function(w) {
-                focusAreaOrder.push(w["Clusters"].toLowerCase())
+                focusAreaOrder.push(w.key.toLowerCase())
               })
             })
           
@@ -2964,24 +2960,19 @@
                 var number_of_opp_spaces = [
                   ...new Set(
                     d.value.values.map(function(v) {
-                      return v["Clusters"];
+                      return v.key;
                     })
                   )
                 ];
                 return number_of_opp_spaces.length;
               })
               .sort(function(a, b) {
-                return d3.ascending(a.value.key, b.value.key)
+                return d3.ascending(a.key, b.key)
               });
   
             var outerChartPieData = outerChartPie(d3.entries(tempOrder));
   
             var chartPieData = chartPie(d3.entries(focusAreaSorted))
-
-            console.log('tempOrder', tempOrder)
-            console.log('focusAreaSorted', focusAreaSorted)
-            console.log('chartPieData', chartPieData)
-            console.log('outerChartPieData', outerChartPieData)
   
             var yearSegmentColorScale = d3
               .scaleOrdinal()
@@ -3257,7 +3248,6 @@
                 .selectAll(".test-class")
                 .data(function(d) {
                   var limit = labelFontData.limit;
-                  console.log('d.data.value.key', d.data.value.key)
                   return textWrap(
                     d.data.value.key.toUpperCase().replace(/_/g," "),
                     d.percentage,
@@ -3300,7 +3290,6 @@
                 })
                 .attr("startOffset", "50%")
                 .text(function(d) {
-                  console.log('d', d)
                   return d.data
                 });
   
