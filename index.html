@@ -80,7 +80,7 @@
         stroke-width: 2px;
       }
 
-      .mature-segments {
+      .distant-segments {
         fill: #f4f4f4;
       }
 
@@ -485,7 +485,7 @@
       }
 
       #button-16 .knobs:before {
-        content: "Maturity";
+        content: "Year";
         position: absolute;
         top: 4px;
         left: 4px;
@@ -545,7 +545,7 @@
       }
 
       #button-16 .checkbox:checked + .knobs:before {
-        content: "Year";
+        content: "Maturity";
         left: 56px;
         background-color: #ea3b66;
       }
@@ -1608,7 +1608,7 @@
 
 
               spinner.stop();
-              //d3.select("#button-16").style("display", "block")
+              d3.select("#button-16").style("display", "block")
               //d3.select("#button-17").style("display", "block")
               //d3.select(".dropdown-client").style("display", "inline-block")
               d3.select("#save-button").style("display", "block")
@@ -2007,20 +2007,20 @@
                               .attr("d", emergingArc);
           
                             var tmp_matureSegments = tmp_chartSVG
-                              .selectAll("mature-segments")
+                              .selectAll("distant-segments")
                               .data([v])
                               .enter()
                               .append("path")
                               .style("fill-opacity", 1)
                               .attr("class", function(d) {
                                 return (
-                                  "mature-segments segment-" +
+                                  "distant-segments segment-" +
                                   d.data.value.key.replace(/ /g, "-").replace(/&/g, "and")
                                 );
                               })
                               .attr("id", function(d) {
                                 return (
-                                  "tmp-mature-segment-" +
+                                  "tmp-distant-segment-" +
                                   d.data.value.key.replace(/ /g, "-").replace(/&/g, "and")
                                 );
                               })
@@ -2835,6 +2835,8 @@
                 return v.length;
               })
               .entries(data);
+
+              console.log(count_by_maturity)
   
             var count_by_client = d3
               .nest()
@@ -2914,7 +2916,7 @@
             var maturity_list = [
               { name: "Nascent", inner: 50, outer: 180 },
               { name: "Emerging", inner: 180, outer: 240 },
-              { name: "Mature", inner: 240, outer: 300 }
+              { name: "Distant", inner: 240, outer: 300 }
             ];
   
             var backgroundArc = d3
@@ -3110,7 +3112,7 @@
                 .outerRadius(v.outer);
   
               var tmpSegment = chartSVG
-                .selectAll("mature-segments")
+                .selectAll("distant-segments")
                 .data(chartPieData)
                 .enter()
                 .append("path")
@@ -3144,7 +3146,7 @@
                     "year-" +
                     v.key +
                     "-" +
-                    d.data.value.key.replace(/ /g, "-").replace(/[\])}[{(]/g, '').replace(/&/g, "and") +
+                    d.data.value.key.replace(/ /g, "-").replace(/[\])}[{(]/g, '').replace(/&/g, "and").replace(/,/g, '') +
                     "-segment"
                   );
                 })
@@ -3591,7 +3593,7 @@
             matureLabel
               .append("def")
               .append("path")
-              .attr("id", "mature-label-path")
+              .attr("id", "distant-label-path")
               .attr(
                 "d",
                 "m " +
@@ -3604,16 +3606,16 @@
             matureLabel
               .append("text")
               .attr("class", "maturity-label-text")
-              .attr("id", "mature-label-path-text")
+              .attr("id", "distant-label-path-text")
               .append("textPath")
-              .attr("xlink:href", "#mature-label-path")
+              .attr("xlink:href", "#distant-label-path")
               .attr("startOffset", "50%")
-              .text("Mature");
+              .text("Distant");
   
             maturity_list_elements = [
               { name: "Nascent", fn: nascentLabel },
               { name: "Emerging", fn: emergingLabel },
-              { name: "Mature", fn: matureLabel }
+              { name: "Distant", fn: matureLabel }
             ];
   
             maturity_list.forEach(function(d) {
@@ -4663,7 +4665,7 @@
 
                   if (type === "Maturity") {
                   var maturityOrder = [
-                  "Nascent", "Emerging", "Mature"]
+                  "Nascent", "Emerging", "Distant"]
                   function maturitySort(a, b) {
                     
                     for (i = 0; i < maturityOrder.length; i++) {
@@ -4808,7 +4810,7 @@
                       "#year-" +
                         d.key +
                         "-" +
-                        v.data.value.key.replace(/ /g, "-").replace(/&/g, "and") +
+                        v.data.value.key.replace(/ /g, "-").replace(/&/g, "and").replace(/[\])}[{(]/g, '').replace(/,/g, '') +
                         "-segment"
                     ).attr("opacity", 1);
                   });
@@ -4853,7 +4855,7 @@
                       "#year-" +
                         d.key +
                         "-" +
-                        v.data.value.key.replace(/ /g, "-").replace(/&/g, "and") +
+                        v.data.value.key.replace(/ /g, "-").replace(/&/g, "and").replace(/[\])}[{(]/g, '').replace(/,/g, '') +
                         "-segment"
                     ).attr("opacity", 0);
                   });
@@ -5547,20 +5549,20 @@
                       .attr("d", emergingArc);
   
                     var tmp_matureSegments = tmp_chartSVG
-                      .selectAll("mature-segments")
+                      .selectAll("distant-segments")
                       .data([chartPieData[i]])
                       .enter()
                       .append("path")
                       .style("fill-opacity", 1)
                       .attr("class", function(d) {
                         return (
-                          "mature-segments segment-" +
+                          "distant-segments segment-" +
                           d.data.value.key.replace(/ /g, "-").replace(/&/g, "and")
                         );
                       })
                       .attr("id", function(d) {
                         return (
-                          "tmp-mature-segment-" +
+                          "tmp-distant-segment-" +
                           d.data.value.key.replace(/ /g, "-").replace(/&/g, "and")
                         );
                       })
