@@ -2055,7 +2055,7 @@
               .append("path")
               .classed("segment-band", true)
               .attr("d", segmentLabelBandArc)
-              .attr("fill", "#7DCCFF")
+              .attr("fill", "#7EA3CC")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -3198,7 +3198,7 @@
                   d.data.value.key.toLowerCase().replace(/ /g, "-") + "-band"
                 );
               })
-              .attr("fill", "#7DCCFF")
+              .attr("fill", "#7EA3CC")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
