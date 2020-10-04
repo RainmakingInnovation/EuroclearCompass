@@ -2964,7 +2964,7 @@
                 var number_of_opp_spaces = [
                   ...new Set(
                     d.value.values.map(function(v) {
-                      return v["Opp Space"];
+                      return v["Clusters"];
                     })
                   )
                 ];
@@ -2979,6 +2979,8 @@
             var chartPieData = chartPie(d3.entries(focusAreaSorted))
 
             console.log('tempOrder', tempOrder)
+            console.log('focusAreaSorted', focusAreaSorted)
+            console.log('chartPieData', chartPieData)
             console.log('outerChartPieData', outerChartPieData)
   
             var yearSegmentColorScale = d3
@@ -3186,7 +3188,7 @@
             var labelWidth = (2 * outerRadius * 1.095) / chartPieData.length;
 
               labelFontData = {
-                limit: labelWidth * 0.35
+                limit: labelWidth * 0.45
               };
   
             var segmentsLabelBand = chartSVG
@@ -3255,7 +3257,7 @@
                 .selectAll(".test-class")
                 .data(function(d) {
                   var limit = labelFontData.limit;
-
+                  console.log('d.data.value.key', d.data.value.key)
                   return textWrap(
                     d.data.value.key.toUpperCase().replace(/_/g," "),
                     d.percentage,
@@ -3298,6 +3300,7 @@
                 })
                 .attr("startOffset", "50%")
                 .text(function(d) {
+                  console.log('d', d)
                   return d.data
                 });
   
