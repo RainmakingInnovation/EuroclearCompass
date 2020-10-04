@@ -1569,18 +1569,7 @@
           "EduardoData - EngieRadar-Definitions.csv"
           ).then(function(desc) {
 
-            
-
-          var fundingCategoryScale = d3.scaleThreshold()
-              .domain([25000000 , 100000000])
-              .range(["5M - 25M", "25M - 100M", "100M+"]);
-
-            data.forEach(function(d) {
-              d['category'] = fundingCategoryScale(+d['Total Funding (USD)'])
-            })
-
             console.log(data)
-
           var transform = d3.geoTransform({ point: projectPoint }),
             path = d3.geoPath().projection(transform);
             
@@ -2160,7 +2149,7 @@
                           })
                           .attr("fill", function(d) {
                             return nodeColorScale(
-                                fundingCategoryScale(d["Total Funding (USD)"])
+                              fundingCategoryScale(d["Funding Stage"])
                               );
                           })
                           .attr("cx", function(d) {
@@ -2192,6 +2181,55 @@
                             })
                             .on("mouseout", hideNodeTooltip);
       
+                      var tmp_acquired = tmp_chartSVG
+                          .selectAll("nodes-acquired")
+                          .data(data)
+                          .enter()
+                          .append("rect")
+                          .attr("class", "nodes nodes-acquired")
+                          .attr("opacity", function(d) {
+                            return d.opacity;
+                          })
+                          .attr("opacity", function(d) {
+                            return d.opacity;
+                          })
+                          .attr("width", function(d) {
+                            if (d["Funding Stage"] === "Acquired") {
+                              return nodeOtherWidth
+                            } else {
+                              return 0;
+                            }
+                          })
+                          .attr("height", function(d) {
+                            if (d["Funding Stage"] === "Acquired") {
+                              return nodeOtherWidth
+                            } else {
+                              return 0;
+                            }
+                          })
+                          .attr("x", 0)
+                          .attr("y", 0)
+                          .attr("fill", "#FFFD82")
+                          .attr("transform", function(d) {
+                            if (radial === "maturity") {
+                              var x = d.x;
+                              var y = d.y;
+                            } else {
+                              var x = d.yearX;
+                              var y = d.yearY;
+                            }
+                            return "translate(" + x + "," + y + ")    rotate(45)";
+                          })
+                          .attr("opacity", function(d) {
+                            if (
+                              d["Clusters"] === chartPieData[i].data.value.key
+                            ) {
+                              return d.opacity;
+                            } else {
+                              return 0;
+                            }
+                          });
+
 
 
 
@@ -2764,12 +2802,16 @@
   
             var fundingCategoryRangeUnique = [...new Set(fundingCategoryRange)];
 
+            var fundingCategoryScale = d3
+              .scaleOrdinal()
+              .domain(fundingCategoryDomain)
+              .range(fundingCategoryRange);
   
             var colors = ["#D75059", "#01AAFF", "#388659"];
   
             var nodeColorScale = d3
               .scaleOrdinal()
-              .domain(fundingCategoryScale.range())
+              .domain(fundingCategoryRangeUnique)
               .range(colors);
   
             var focusAreaSorted = d3
@@ -2837,8 +2879,6 @@
                 return v.length;
               })
               .entries(data);
-
-              console.log(count_by_maturity)
   
             var count_by_client = d3
               .nest()
@@ -3413,7 +3453,7 @@
   
             var keyOther = keySVG
               .selectAll("g.key-other")
-              .data(fundingCategoryScale.range())
+              .data(fundingCategoryRangeUnique)
               .enter()
               .append("g")
               .attr("transform", function(d, i) {
@@ -3424,6 +3464,52 @@
                 return "translate(" + horz + "," + vert + ")";
               });
   
+              var keyAcquired = keySVG
+              .append("g")
+              .attr("transform", "translate(-45,-30)");
+  
+            keyAcquired
+              .append("rect")
+              .classed("key-item-other", true)
+              .attr("width", 8.8)
+              .attr("height", 8.8)
+              .attr("fill", "#FFFD82")
+              .attr("x", -4)
+              .attr("y", 3)
+              .attr("transform", "translate(0, -7) rotate(45)")
+              .on("mouseover", function(d) {
+                keyMouseOver("Acquired", "acquired");
+              })
+              .on("mouseout", keyMouseOut)
+              .on("click", function(d) {
+                if (filterKey === "acquired") {
+                  filterKey = "";
+                  updateNodes("key", filterKey);
+                } else {
+                  filterKey = "acquired";
+                  updateNodes("key", filterKey);
+                }
+              });
+  
+            keyAcquired
+              .append("text")
+              .text("Acquired")
+              .classed("key-labels key-label", true)
+              .attr("dx", "1.3em")
+              .attr("dy", "0.2em")
+              .on("mouseover", function() {
+                keyMouseOver("Acquired", "acquired");
+              })
+              .on("mouseout", keyMouseOut)
+              .on("click", function(d) {
+                if (filterKey === "acquired") {
+                  filterKey = "";
+                  updateNodes("key", filterKey);
+                } else {
+                  filterKey = "acquired";
+                  updateNodes("key", filterKey);
+                }
+              });
   
             keyOther
               .append("circle")
@@ -3924,7 +4010,11 @@
               })
               .attr("class", "nodes")
               .attr("r", function(d) {
+                if (
+                    d["Funding Stage"] !== "Acquired"
+                ) {
                   return nodeRadius;
+                }
               })
               .attr("cx", function(d) {
                 return d.yearX;
@@ -3934,7 +4024,7 @@
               })
               .attr("fill", function(d) {
                 return nodeColorScale(
-                    fundingCategoryScale(d["Total Funding (USD)"])
+                    fundingCategoryScale(d["Funding Stage"])
                   );
               })
               .on("mouseover", function(d) {
@@ -3943,6 +4033,46 @@
               })
               .on("mouseout", hideNodeTooltip);
   
+              var nodes_acquired = chartSVG
+              .selectAll("nodes-acquired")
+              .data(data)
+              .enter()
+              .append("a")
+              .attr("xlink:href", function(d) {
+                return formatURL(d.URL)
+              })
+              .attr("target", "_blank")
+              .append("rect")
+              .attr("class", "nodes nodes-acquired")
+              .attr("id", function(d) {
+                return d["Startup"].toLowerCase().replace(/ /g, "-");
+              })
+              .attr("width", function(d) {
+                if (d["Funding Stage"] === "Acquired") {
+                  return nodeOtherWidth
+                } else {
+                  return 0;
+                }
+              })
+              .attr("height", function(d) {
+                if (d["Funding Stage"] === "Acquired") {
+                  return nodeOtherWidth
+                } else {
+                  return 0;
+                }
+              })
+              .attr("x", 0)
+              .attr("y", 0)
+              .attr("fill", "#FFFD82")
+              .attr("transform", function(d) {
+                return "translate(" + d.yearX + "," + d.yearY + ")    rotate(45)";
+              })
+              .on("mouseover", function(d) {
+                //nodeMouseOver(d);
+                showNodeTooltip(d)
+              })
+              .on("mouseout", hideNodeTooltip);
+
             /* function keyMouseOver(data, type) {
                 nodes.attr("opacity", function(d) {
                   if (nodeSizeScaleFunction(d["$ Total Funding "]) === data) {
@@ -3960,9 +4090,9 @@
                   d.opacity = 1;
                 });
                 nodes.attr("opacity", 1);
-
+                nodes_acquired.attr("opacity", 1);
                 keyOther.attr("opacity", 1);
-
+                keyAcquired.attr("opacity", 1);
                 segmentsLabelBand.attr("opacity", function(d) {
                   d.opacity = 1;
                   return d.opacity;
@@ -3977,8 +4107,15 @@
                   return d.opacity;
                 });
 
+                nodes_acquired.attr("opacity", function(d) {
+                  if (d["Funding Stage"] === "Acquired") {
+                    d.opacity = 1;
+                  }
+                  return d.opacity;
+                });
   
                 keyOther.attr("opacity", 0.3);
+                keyAcquired.attr("opacity", 1);
 
               }
   
@@ -3996,9 +4133,17 @@
                 });
 
   
-
+                nodes_acquired.attr("opacity", function(d) {
+                  if (d["Activity/Acquisition Time"] != "") {
+                    d.opacity = 1;
+                  } else {
+                    d.opacity = 0.3;
+                  }
+                  return d.opacity;
+                });
                 keyOther.attr("opacity", 0.3);
-  
+
+                keyAcquired.attr("opacity", 0.3);
               }
   
               if (
@@ -4016,6 +4161,12 @@
                   return v.opacity;
                 });
   
+                nodes_acquired.attr("opacity", function(d) {
+                  if (d["Funding Stage"] === "Acquired") {
+                    d.opacity = 0.3;
+                  }
+                  return d.opacity;
+                });
   
 
   
@@ -4027,6 +4178,8 @@
                   }
                 });
   
+                keyAcquired.attr("opacity", 0.3);
+
               }
               if (type === "focus area" && filterKey !== "") {
                 nodes.attr("opacity", function(d) {
@@ -4038,6 +4191,14 @@
                   return d.opacity;
                 });
 
+              nodes_acquired.attr("opacity", function(d) {
+                  if (d["Opportunity Space"].toLowerCase() !== filterKey) {
+                    d.opacity = 0.3;
+                  } else {
+                    d.opacity = 1;
+                  }
+                  return d.opacity;
+                });
   
                 //segment_data.data.value.key
                 segmentsLabelBand.attr("opacity", function(d) {
@@ -4331,9 +4492,60 @@
                   };
                 });
   
-
-  
-
+                nodes_acquired
+                .transition()
+                .duration(animationDuration * 0.7)
+                .attrTween("width", function(d) {
+                  var startWidth = d3.select(this).attr("width");
+                  if (
+                    (d["Client Served"] === type || type === "All Startups") &&
+                    d["Funding Stage"] === "Acquired" &&
+                    d.hide === false &&
+                    (d["Global"] === geotype || geotype === "All Startups")
+                  ) {
+                    var endWidth = nodeOtherWidth
+                  } else {
+                    var endWidth = 0;
+                  }
+                  var i = d3.interpolate(startWidth, endWidth);
+                  return function(t) {
+                    return i(t);
+                  };
+                })
+                .attrTween("height", function(d) {
+                  var startHeight = d3.select(this).attr("height");
+                  if (
+                    (d["Client Served"] === type || type === "All Startups") &&
+                    d["Funding Stage"] === "Acquired" &&
+                    d.hide === false &&
+                    (d["Global"] === geotype || geotype === "All Startups")
+                  ) {
+                    var endHeight = nodeOtherWidth
+                  } else {
+                    var endHeight = 0;
+                  }
+                  var i = d3.interpolate(startHeight, endHeight);
+                  return function(t) {
+                    return i(t);
+                  };
+                })
+                .attrTween("y", function(d) {
+                  var startY = d3.select(this).attr("y");
+                  if (
+                    (d["Client Served"] === type || type === "All Startups") &&
+                    d["Funding Stage"] === "Acquired" &&
+                    d.hide === false &&
+                    (d["Global"] === geotype || geotype === "All Startups")
+                  ) {
+                    var endY = 0;
+                  } else {
+                    var endY = nodeOtherWidth*1.5
+                  }
+                  var i = d3.interpolate(startY, endY);
+                  return function(t) {
+                    return i(t);
+                  };
+                });
             }
 
             function update_bar(type) {
@@ -4788,10 +5000,17 @@
                     };
                   });
   
+                  nodes_acquired
+                  .transition()
+                  .duration(animationDuration)
+                  .attrTween("transform", function(d) {
+                    var i = d3.interpolate(d.x, d.yearX);
+                    var j = d3.interpolate(d.y, d.yearY);
+                    return function(t) {
+                      return "translate(" + i(t) + "," + j(t) + ") rotate(45)";
+                    };
+                  });
 
-  
-
-  
                 maturity_list.forEach(function(d) {
                   var id = "#" + d.name.toLowerCase() + "-label-path-text";
                   d3.select(id).remove();
@@ -4845,10 +5064,17 @@
                     };
                   });
   
+                  nodes_acquired
+                  .transition()
+                  .duration(animationDuration)
+                  .attrTween("transform", function(d) {
+                    var i = d3.interpolate(d.yearX, d.x);
+                    var j = d3.interpolate(d.yearY, d.y);
+                    return function(t) {
+                      return "translate(" + i(t) + "," + j(t) + ") rotate(45)";
+                    };
+                  });
 
-  
-
-  
                 count_by_year.forEach(function(d) {
                   var id = "#year-" + d.key + "-label-path-text";
                   d3.select(id).remove();
@@ -5105,6 +5331,13 @@
                 }
               });
   
+              nodes_acquired.attr("opacity", function(d) {
+                if (d["Clusters"] === segment_data.data.value.key) {
+                  return 1;
+                } else {
+                  return 0.3;
+                }
+              });
 
             }
   
@@ -5118,11 +5351,14 @@
               nodes.attr("opacity", function(d) {
                 return d.opacity;
               });
-
+              nodes_acquired.attr("opacity", function(d) {
+                return d.opacity;
+              });
             }
   
             function keyMouseOver(data, type) {
               if (type === "acquired") {
+                nodes_acquired.attr("opacity", 1);
                 nodes.attr("opacity", 0.3);
               }
               /* if (type === "size") {
@@ -5136,18 +5372,26 @@
                   nodes_acquired.attr("opacity", 0.3);
                 } */
               if (type === "color") {
-                console.log(data)
                 nodes.attr("opacity", function(d) {
-                  if (fundingCategoryScale(d["Total Funding (USD)"]) === data) {
+                  if (fundingCategoryScale(d["Funding Stage"]) === data) {
                     return 1;
                   } else {
                     return 0.3;
                   }
                 });
+               nodes_acquired.attr("opacity", 0.3);
+
               }
   
               if (type === "activity") {
                 nodes.attr("opacity", function(d) {
+                  if (d["Activity/Acquisition Time"] != "" && d.hide === false) {
+                    return 1;
+                  } else {
+                    return 0.3;
+                  }
+                });
+                nodes_acquired.attr("opacity", function(d) {
                   if (d["Activity/Acquisition Time"] != "" && d.hide === false) {
                     return 1;
                   } else {
@@ -5159,6 +5403,9 @@
   
             function keyMouseOut() {
               nodes.attr("opacity", function(d) {
+                return d.opacity;
+              });
+              nodes_acquired.attr("opacity", function(d) {
                 return d.opacity;
               });
             }
@@ -5289,7 +5536,9 @@
                 }
               });
               if (d["Funding Stage"] === "Acquired") {
+                nodes_acquired.attr("opacity", 1);
               } else {
+                nodes_acquired.attr("opacity", 0.3);
               }
 
               d3.select(".node-tooltip").style("transform", `translate(${x}px,${y}px)`);
@@ -5299,6 +5548,9 @@
               d3.select(".node-tooltip")
               .style("opacity", 0);
               nodes.attr("opacity", function(d) {
+                return d.opacity;
+              });
+              nodes_acquired.attr("opacity", function(d) {
                 return d.opacity;
               });
             }
@@ -5412,7 +5664,9 @@
                 }
               });
               if (data["Funding Stage"] === "Acquired") {
+                nodes_acquired.attr("opacity", 1);
               } else {
+                nodes_acquired.attr("opacity", 0.3);
               }
             }
   
@@ -5422,6 +5676,9 @@
               d3.select("#node-mouse-over-actual-text").remove();
   
               nodes.attr("opacity", function(d) {
+                return d.opacity;
+              });
+              nodes_acquired.attr("opacity", function(d) {
                 return d.opacity;
               });
             }
@@ -5709,6 +5966,55 @@
                       } else {
                         return d.yearY;
                       }
+                    })
+                    .attr("opacity", function(d) {
+                      if (
+                        d["Clusters"] === chartPieData[i].data.value.key
+                      ) {
+                        return d.opacity;
+                      } else {
+                        return 0;
+                      }
+                    });
+
+                  var tmp_acquired = tmp_chartSVG
+                    .selectAll("nodes-acquired")
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "nodes nodes-acquired")
+                    .attr("opacity", function(d) {
+                      return d.opacity;
+                    })
+                    .attr("opacity", function(d) {
+                      return d.opacity;
+                    })
+                    .attr("width", function(d) {
+                      if (d["Funding Stage"] === "Acquired") {
+                        return nodeOtherWidth
+                      } else {
+                        return 0;
+                      }
+                    })
+                    .attr("height", function(d) {
+                      if (d["Funding Stage"] === "Acquired") {
+                        return nodeOtherWidth
+                      } else {
+                        return 0;
+                      }
+                    })
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("fill", "#FFFD82")
+                    .attr("transform", function(d) {
+                      if (radial === "maturity") {
+                        var x = d.x;
+                        var y = d.y;
+                      } else {
+                        var x = d.yearX;
+                        var y = d.yearY;
+                      }
+                      return "translate(" + x + "," + y + ")    rotate(45)";
                     })
                     .attr("opacity", function(d) {
                       if (
