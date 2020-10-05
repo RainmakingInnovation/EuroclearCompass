@@ -3144,7 +3144,7 @@
               .attr("id", function(d) {
                 return (
                   "background-segment-" +
-                  d.data.value.key.replace(/ /g, "-").replace(/&/g, "and")
+                  d.data.value.key.replace(/[\])}[{(]/g, '').replace(/ /g, "-").replace(/,/g, '').replace(/&/g, "and")
                 );
               })
               .style("opacity", 0)
@@ -5697,78 +5697,70 @@
               });
             }
             function save_split() {
-              for (let i = 0; i < chartPieData.length; i++) {
+              //for (let i = 0; i < chartPieData.length; i++) {
+                for (let i = 0; i < 0; i++) {
+                console.log(chartPieData[i].data.value.key.replace(/[\])}[{(]/g, '').replace(/ /g, "-").replace(/,/g, '').replace(/&/g, "and"))
                 setTimeout(function() {
                   var selection =
                     "#background-segment-" +
-                    chartPieData[i].data.value.key
+                    chartPieData[i].data.value.key.replace(/[\])}[{(]/g, '').replace(/ /g, "-").replace(/,/g, '').replace(/&/g, "and")
                       .replace(/ /g, "-")
                       .replace(/&/g, "and");
                   var tmp_width =
                     d3
                       .select(selection)
                       .node()
-                      .getBoundingClientRect().width + 40;
+                      .getBoundingClientRect().width 
                   var tmp_height =
                     d3
                       .select(selection)
                       .node()
-                      .getBoundingClientRect().height + 40;
+                      .getBoundingClientRect().height
   
                   var tmp_svg = d3
                     .select("#tmp-container")
                     .append("svg")
-                    .attr("width", tmp_width)
-                    .attr("height", tmp_height);
+                    .attr("width", width/2)
+                    .attr("height", height/2);
+
+                    var clientRect =
+                    d3
+                      .select(selection)
+                      .node()
+                      .getBoundingClientRect()
   
-                          if (i === 0) {
-                            var hor = tmp_width - 170
-                            var ver = tmp_height + 45;
-                          }
-                          if (i === 1) {
-                            var hor = tmp_width - 290;
-                            var ver = tmp_height + 20;
-                          }
-                          if (i === 2) {
-                            var hor = tmp_width - 340;
-                            var ver = tmp_height - 20;
-                          }
-                          if (i === 3) {
-                            var hor = tmp_width - 335;
-                            var ver = tmp_height - 170;
-                          }
-                          if (i === 4) {
-                            var hor = tmp_width - 290;
-                            var ver = tmp_height - 290;
-                          }
-                          if (i === 5) {
-                            var hor = tmp_width - 180;
-                            var ver = tmp_height - 330;
-                          }
-                          if (i === 6) {
-                            var hor = tmp_width - 15;
-                            var ver = tmp_height - 330;
-                          }
-                          if (i === 7) {
-                            var hor = tmp_width + 20;
-                            var ver = tmp_height - 290;
-                          }
-                          if (i === 8) {
-                            var hor = tmp_width + 40;
-                            var ver = tmp_height - 180;
-                          }
-                          if (i === 9) {
-                         var hor = tmp_width + 40;
-                            var ver = tmp_height - 10;
-                          }
-                          if (i === 10) {
-                            var hor = tmp_width + 25;
-                            var ver = tmp_height + 25;
-                          }
-                          if (i === 11) {
-                            var hor = tmp_width - 15;
-                            var ver = tmp_height + 45;
-                          }
+                    var tmp_angle = (6.283/chartPieData.length)*(i+1)
+                    console.log('i', i)
+                    console.log('tmp_angle', tmp_angle)
+                    var adj = outerRadius * Math.cos(tmp_angle)
+                    var opp = outerRadius * Math.sin(tmp_angle)
+                    var adjR = (innerRadius+110) * Math.cos(tmp_angle)
+                    var oppR = (innerRadius+110) * Math.sin(tmp_angle)
+                    console.log('adj', adj)
+                    console.log('opp', opp)
+                    var quad = 3
+                    var hor = 0
+                    var ver = 50
+                    if (tmp_angle < 6.283/4) {
+                      quad = 1
+                      hor += Math.abs(Math.sin(tmp_angle+6.283/4)*width/8)
+                      ver = height/2
+                    } else {
+                      if (tmp_angle < 6.283/2) {
+                        quad = 2
+                        hor += Math.abs(Math.sin(tmp_angle+6.283/4)*width/8)
+                      } else {
+                        if (tmp_angle < 3*6.283/4) {
+                          hor = width/2
+                          hor-= Math.abs(Math.sin(tmp_angle+6.283/4)*width/8)
+                        } else {
+                          hor = width/2
+                          hor-= Math.abs(Math.sin(tmp_angle+6.283/4)*width/8)
+                          ver = height/2
+                          ver-= Math.abs(Math.sin(tmp_angle)*width/4)
+                        }
+                      }
+                    }
   
                   var tmp_chartSVG = tmp_svg
                     .append("g")
