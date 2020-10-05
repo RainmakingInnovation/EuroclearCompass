@@ -101,7 +101,7 @@
         fill: white;
         text-anchor: middle;
         font-weight: bold;
-        font-size: 10px;
+        font-size: 9px;
         font-family: "Graphik Bold";
       }
 
@@ -1415,7 +1415,7 @@
 
           <div class="dropdown-client">
             <button class="dropbtn">
-                Select Client Served  <i class="arrow down"></i>
+                Select Value Chain  <i class="arrow down"></i>
               </button>
               <div class="dropdown-content" id="client-selector"></div>
           </div>
@@ -1563,7 +1563,7 @@
           .style("display", "none")
   
         d3.csv(
-          "EuroClear Project Hub.xlsx - Compass - Startup Bank.csv"
+          "EuroClear Project Hub.xlsx - Compass - Startup Bank_.csv"
         ).then(function(data) {
           d3.csv(
           "EduardoData - EngieRadar-Definitions.csv"
@@ -1601,7 +1601,7 @@
               spinner.stop();
               d3.select("#button-16").style("display", "block")
               //d3.select("#button-17").style("display", "block")
-              //d3.select(".dropdown-client").style("display", "inline-block")
+              d3.select(".dropdown-client").style("display", "inline-block")
               d3.select("#save-button").style("display", "block")
               d3.select(".chart-title").style("display", "")
               //chartLogo.style("display", "block")
@@ -2695,13 +2695,18 @@
               })
               .entries(data)
               .sort(function(a, b) {
-                return d3.ascending(+a.values[0]['Super Cluster Number'], +b.values[0]['Super Cluster Number'])
+                return d3.ascending(+a.values[0].values[0]['Super Cluster Number'], +b.values[0].values[0]['Super Cluster Number'])
               })
+
+            console.log('tempOrder', tempOrder)
 
             var themeOrder = []
             var focusAreaOrder = []
             tempOrder.forEach(function(v) {
               themeOrder.push(v.key)
+              v.values.sort(function(a, b) {
+                return d3.ascending(+a.values[0]['Absolute FINAL sub-cluster'], +b.values[0]['Absolute FINAL sub-cluster'])
+              })
               v.values.forEach(function(w) {
                 focusAreaOrder.push(w.key.toLowerCase())
               })
@@ -2776,7 +2781,6 @@
   
             // need to fix.
             var fundingCategoryDomain = [
-              "Undisclosed",
               "Seed",
               "Series A",
               "Series B",
@@ -2787,7 +2791,6 @@
             ];
   
             var fundingCategoryRange = [
-              "Undisclosed",
               "Seed",
               "Series A",
               "Series B",
@@ -2804,7 +2807,8 @@
               .domain(fundingCategoryDomain)
               .range(fundingCategoryRange);
   
-            var colors = ["#D75059", "#01AAFF", "#388659", "#9F8DB9", "#C2C2C2"];
+            //var colors = ["#D75059", "#01AAFF", "#388659", "#9F8DB9", "#C2C2C2"];
+            var colors = ["#EBF7FC", "#5FBDFB", "#237DC5", "#345983"];
   
             var nodeColorScale = d3
               .scaleOrdinal()
@@ -2877,10 +2881,10 @@
               })
               .entries(data);
   
-            var count_by_client = d3
+            var count_by_value_chain = d3
               .nest()
               .key(function(d) {
-                return d["Client Served"];
+                return d["Value Chain Grouping"];
               })
               .sortKeys(d3.ascending)
               .rollup(function(v) {
@@ -3023,20 +3027,20 @@
               .range(["#f4f4f4"]);
   
   
-            clientList = [
+            valueChainList = [
               "All Startups"
             ];
 
-            count_by_client.forEach(function(v) {
+            count_by_value_chain.forEach(function(v) {
               if (v.key != "") {
-                clientList.push(v.key)
+                valueChainList.push(v.key)
               }
             })
   
-            var clientSelector = d3
+            var valueChainSelector = d3
               .select("#client-selector")
               .selectAll("a")
-              .data(clientList)
+              .data(valueChainList)
               .enter()
               .append("text")
               .html(function(d) {
@@ -3195,9 +3199,16 @@
                 .attr("opacity", 1)
                 .attr("fill", yearSegmentColorScale(v.key))
                 .style("cursor", "pointer")
-                /*.on("click", function(d) {
-                  update_popup(d)
-                })*/
+              .on("mouseover", function(d) {
+                labelMouseOver(d);
+                showOppSpaceTooltip(d)
+
+              })
+              .on("mouseout", function(d) {
+                if (hoverOn === 0) {
+                  labelMouseOut();
+                }
+              })
             });
   
             var numSegments = focusAreaSorted.length;
@@ -3306,19 +3317,19 @@
                       return "-1.1em";
                     } else {
                       if (i === 0) {
-                        return "-1.6em";
+                        return "-1.8em";
                       } else {
-                        return "-0.6em";
+                        return "-0.7em";
                       }
                     }
                   } else {
                     if (d.lineLength === 1) {
-                      return "1.8em";
+                      return "1.9em";
                     } else {
                       if (i === 0) {
-                        return "1.3em";
+                        return "1.4em";
                       } else {
-                        return "2.3em";
+                        return "2.5em";
                       }
                     }
                   }
@@ -4476,7 +4487,7 @@
                 .attrTween("r", function(d) {
                   var startR = d3.select(this).attr("r");
                   if (
-                    (d["Client Served"] === type || type === "All Startups") &&
+                    (d["Value Chain Grouping"] === type || type === "All Startups") &&
                     d["Funding Stage"] !== "Acquired" &&
                     d.hide === false &&
                     (d["Global"] === geotype || geotype === "All Startups")
@@ -4497,7 +4508,7 @@
                 .attrTween("width", function(d) {
                   var startWidth = d3.select(this).attr("width");
                   if (
-                    (d["Client Served"] === type || type === "All Startups") &&
+                    (d["Value Chain Grouping"] === type || type === "All Startups") &&
                     d["Funding Stage"] === "Acquired" &&
                     d.hide === false &&
                     (d["Global"] === geotype || geotype === "All Startups")
@@ -4514,7 +4525,7 @@
                 .attrTween("height", function(d) {
                   var startHeight = d3.select(this).attr("height");
                   if (
-                    (d["Client Served"] === type || type === "All Startups") &&
+                    (d["Value Chain Grouping"] === type || type === "All Startups") &&
                     d["Funding Stage"] === "Acquired" &&
                     d.hide === false &&
                     (d["Global"] === geotype || geotype === "All Startups")
@@ -4531,7 +4542,7 @@
                 .attrTween("y", function(d) {
                   var startY = d3.select(this).attr("y");
                   if (
-                    (d["Client Served"] === type || type === "All Startups") &&
+                    (d["Value Chain Grouping"] === type || type === "All Startups") &&
                     d["Funding Stage"] === "Acquired" &&
                     d.hide === false &&
                     (d["Global"] === geotype || geotype === "All Startups")
@@ -5315,7 +5326,7 @@
                 .entries(
                   data.filter(function(d) {
                     if (clientFilter !== "All Startups") {
-                      return d["Client Served"] === clientFilter;
+                      return d["Value Chain Grouping"] === clientFilter;
                     } else {
                       return d;
                     }
@@ -5440,7 +5451,7 @@
                 if (filters.type === "All Startups") {
                   return v
                 } else {
-                  return v["Client Served"] === filters.type
+                  return v["Value Chain Grouping"] === filters.type
                 }
               }).filter(function(v) {
                 if (filters.geotype === "All Startups") {
@@ -5487,7 +5498,11 @@
               if (url.slice(0,3) === "www") {
                 return "http://" + url
               } else {
-                return url
+                if (url.slice(0,4) != "http") {
+                  return "http://" + url
+                } else {
+                  return url
+                }
               }
             }
 
