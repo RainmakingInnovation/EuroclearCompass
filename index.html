@@ -101,7 +101,7 @@
         fill: white;
         text-anchor: middle;
         font-weight: bold;
-        font-size: 9px;
+        font-size: 7px;
         font-family: "Graphik Bold";
       }
 
@@ -1193,6 +1193,13 @@
   #map-toggle-btn {
     display: none;
   }
+    .alt-checkbox {
+    font-family: "Graphik Regular";
+    padding: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    float: left;
+  }
     </style>
 
   </head>
@@ -1419,6 +1426,10 @@
               </button>
               <div class="dropdown-content" id="client-selector"></div>
           </div>
+               <div class="alt-checkbox alt-checkbox-eu">
+                <i class="far fa-check-square fa-lg"></i>
+                EU Startups
+              </div>
           <div id="save-button-container">
             <button class="switch-button" id="save-button">Save Image</button>
           </div>
@@ -1450,7 +1461,7 @@
           clientFilter = "All Startups",
           geoFilter = "All Startups",
           filters = {type: "All Startups", geotype: "All Startups"}
-          logoPath = "assets/engie_logo.png",
+          logoPath = "assets/Euroclear-logo.jpg",
           titleLogoWidth = 80,
           titleLogoHeight = 50,
           hoverOn = 0;
@@ -1462,6 +1473,7 @@
           popupMode = {"page": "none", "type": "none"},
           indexTracker = {},
           indexTrackerYear = {};
+          eu = true;
 
       // mapbox access token
       const accessToken =
@@ -1604,7 +1616,7 @@
               d3.select(".dropdown-client").style("display", "inline-block")
               d3.select("#save-button").style("display", "block")
               d3.select(".chart-title").style("display", "")
-              //chartLogo.style("display", "block")
+              chartLogo.style("display", "block")
 
               d3.json("assets/world_countries.json").then(function(json) {
 
@@ -2036,14 +2048,14 @@
                             });
                           }
 
-                    var tmpSegmentsLabelBand = tmp_chartSVG
+              var tmpSegmentsLabelBand = tmp_chartSVG
               .selectAll("path.segment-band")
               .data([chartPieData[i]])
               .enter()
               .append("path")
               .classed("segment-band", true)
               .attr("d", segmentLabelBandArc)
-              .attr("fill", "#7EA3CC")
+              .attr("fill", "#E44E5A")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -2096,22 +2108,22 @@
                 .attr("dy", function(d, i) {
                   if (d.percentage >= 25 && d.percentage <= 75) {
                     if (d.lineLength === 1) {
-                      return "-1.1em";
+                      return "-1.6em";
                     } else {
                       if (i === 0) {
-                        return "-1.6em";
+                        return "-2.3em";
                       } else {
-                        return "-0.6em";
+                        return "-1em";
                       }
                     }
                   } else {
                     if (d.lineLength === 1) {
-                      return "1.8em";
+                      return "2.4em";
                     } else {
                       if (i === 0) {
-                        return "1.3em";
+                        return "1.9em";
                       } else {
-                        return "2.3em";
+                        return "3em";
                       }
                     }
                   }
@@ -3015,6 +3027,8 @@
                 return d3.ascending(a.key, b.key)
               });
 
+              console.log('focusAreaSorted', focusAreaSorted)
+
   
             var outerChartPieData = outerChartPie(d3.entries(tempOrder));
   
@@ -3077,7 +3091,7 @@
               .enter()
               .append("path")
               .attr("d", themeArc)
-              .attr("fill", "#247DC5")
+              .attr("fill", "#D22030")
               .style("stroke", "white")
               .style("stroke-width", "2px")
               .each(function(d, i) {
@@ -3233,7 +3247,7 @@
             var labelWidth = (2 * outerRadius * 1.095) / chartPieData.length;
 
               labelFontData = {
-                limit: labelWidth * 0.45
+                limit: labelWidth * 0.6
               };
   
             var segmentsLabelBand = chartSVG
@@ -3248,7 +3262,7 @@
                   d.data.value.key.toLowerCase().replace(/ /g, "-") + "-band"
                 );
               })
-              .attr("fill", "#7EA3CC")
+              .attr("fill", "#E44E5A")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -3314,22 +3328,22 @@
                 .attr("dy", function(d, i) {
                   if (d.percentage >= 25 && d.percentage <= 75) {
                     if (d.lineLength === 1) {
-                      return "-1.1em";
+                      return "-1.6em";
                     } else {
                       if (i === 0) {
-                        return "-1.8em";
+                        return "-2.3em";
                       } else {
-                        return "-0.7em";
+                        return "-1em";
                       }
                     }
                   } else {
                     if (d.lineLength === 1) {
-                      return "1.9em";
+                      return "2.4em";
                     } else {
                       if (i === 0) {
-                        return "1.4em";
+                        return "1.9em";
                       } else {
-                        return "2.5em";
+                        return "3em";
                       }
                     }
                   }
@@ -3985,6 +3999,22 @@
                   //d3.select("#switch-button-maturity").attr("background-color", "#8e8e8e")
                 }
               });
+
+              d3.select(".alt-checkbox-eu").on("click", function() {
+                if (eu == true) {
+                  eu = false
+                  d3.select(".alt-checkbox-eu").select(".far").attr("class", function() {
+                    return "far fa-square fa-lg"
+                  })
+                  update_visibility()
+                } else {
+                  eu = true
+                  d3.select(".alt-checkbox-eu").select(".far").attr("class", function() {
+                    return "far fa-check-square fa-lg"
+                  })
+                  update_visibility()
+                }
+              })
 
               d3.select("#button-16").on("change", function() {
                 switchRadial();
@@ -4988,6 +5018,24 @@
 
                 
             }
+
+          function update_visibility() {
+              nodes.style("visibility", function(d) {
+                var visibility = "visible"
+                if (eu == false && d["EU"] == "Y") {
+                  visibility = "hidden"
+                }
+                return visibility
+              })
+
+              nodes_acquired.style("visibility", function(d) {
+                var visibility = "visible"
+                if (eu == false && d["EU"] == "Y") {
+                  visibility = "hidden"
+                }
+                return visibility
+              })
+            }
   
             
             function switchRadial() {
@@ -5860,7 +5908,7 @@
                     .append("path")
                     .classed("segment-band", true)
                     .attr("d", segmentLabelBandArc)
-                    .attr("fill", "#7DCCFF")
+                    .attr("fill", "#E44E5A")
   
                   var tmpLabels = tmp_chartSVG
                     .append("g")
