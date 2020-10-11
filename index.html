@@ -5567,6 +5567,9 @@
               } else {
                 fundingVal = "$" + formatFunding(d["Total Funding (USD)"])
               }
+              if (fundingVal == "$-") {
+                fundingVal = "-"
+              }
 
               d3.select(".node-tooltip-title").text(d["Startup"]);
               d3.select(".node-tooltip-funding").text("Total Funding: " + (fundingVal));
