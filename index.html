@@ -1427,7 +1427,7 @@
               <div class="dropdown-content" id="client-selector"></div>
           </div>
                <div class="alt-checkbox alt-checkbox-eu">
-                <i class="far fa-check-square fa-lg"></i>
+                <i class="far fa-square fa-lg"></i>
                 EU Only
               </div>
           <div id="save-button-container">
@@ -2820,7 +2820,7 @@
               .range(fundingCategoryRange);
   
             //var colors = ["#D75059", "#01AAFF", "#388659", "#9F8DB9", "#C2C2C2"];
-            var colors = ["#F4B8BD", "#EA717B", "#D22030", "#A01823"];
+            var colors = ["#FADCDE", "#EA717B", "#D22030", "#7C131B"];
   
             var nodeColorScale = d3
               .scaleOrdinal()
@@ -4004,14 +4004,15 @@
                 if (eu == true) {
                   eu = false
                   d3.select(".alt-checkbox-eu").select(".far").attr("class", function() {
-                    return "far fa-square fa-lg"
+                    return "far fa-check-square fa-lg"
                   })
                   update_visibility()
                 } else {
                   eu = true
-                  d3.select(".alt-checkbox-eu").select(".far").attr("class", function() {
-                    return "far fa-check-square fa-lg"
+                    d3.select(".alt-checkbox-eu").select(".far").attr("class", function() {
+                    return "far fa-square fa-lg"
                   })
+
                   update_visibility()
                 }
               })
