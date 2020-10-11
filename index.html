@@ -2055,7 +2055,7 @@
               .append("path")
               .classed("segment-band", true)
               .attr("d", segmentLabelBandArc)
-              .attr("fill", "#EA717B")
+              .attr("fill", "#EF959C")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -3091,7 +3091,7 @@
               .enter()
               .append("path")
               .attr("d", themeArc)
-              .attr("fill", "#A01823")
+              .attr("fill", "#D22030")
               .style("stroke", "white")
               .style("stroke-width", "2px")
               .each(function(d, i) {
@@ -3262,7 +3262,7 @@
                   d.data.value.key.toLowerCase().replace(/ /g, "-") + "-band"
                 );
               })
-              .attr("fill", "#EA717B")
+              .attr("fill", "#EF959C")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -5909,7 +5909,7 @@
                     .append("path")
                     .classed("segment-band", true)
                     .attr("d", segmentLabelBandArc)
-                    .attr("fill", "#EA717B")
+                    .attr("fill", "#EF959C")
   
                   var tmpLabels = tmp_chartSVG
                     .append("g")
