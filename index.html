@@ -1428,7 +1428,7 @@
           </div>
                <div class="alt-checkbox alt-checkbox-eu">
                 <i class="far fa-check-square fa-lg"></i>
-                EU Startups
+                EU Only
               </div>
           <div id="save-button-container">
             <button class="switch-button" id="save-button">Save Image</button>
@@ -2055,7 +2055,7 @@
               .append("path")
               .classed("segment-band", true)
               .attr("d", segmentLabelBandArc)
-              .attr("fill", "#E44E5A")
+              .attr("fill", "#EA717B")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -2820,7 +2820,7 @@
               .range(fundingCategoryRange);
   
             //var colors = ["#D75059", "#01AAFF", "#388659", "#9F8DB9", "#C2C2C2"];
-            var colors = ["#EBF7FC", "#5FBDFB", "#237DC5", "#345983"];
+            var colors = ["#F4B8BD", "#EA717B", "#D22030", "#A01823"];
   
             var nodeColorScale = d3
               .scaleOrdinal()
@@ -3091,7 +3091,7 @@
               .enter()
               .append("path")
               .attr("d", themeArc)
-              .attr("fill", "#D22030")
+              .attr("fill", "#A01823")
               .style("stroke", "white")
               .style("stroke-width", "2px")
               .each(function(d, i) {
@@ -3262,7 +3262,7 @@
                   d.data.value.key.toLowerCase().replace(/ /g, "-") + "-band"
                 );
               })
-              .attr("fill", "#E44E5A")
+              .attr("fill", "#EA717B")
               .each(function(d, i) {
                 var firstArcSection = /(^.+?)L/;
                 var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
@@ -5908,7 +5908,7 @@
                     .append("path")
                     .classed("segment-band", true)
                     .attr("d", segmentLabelBandArc)
-                    .attr("fill", "#E44E5A")
+                    .attr("fill", "#EA717B")
   
                   var tmpLabels = tmp_chartSVG
                     .append("g")
