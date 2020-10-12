@@ -1676,12 +1676,15 @@
 
             data.forEach(function(v) {
               if (v["Clusters"] == "Alt debt, loans & SME financing") {
-                v["Super Clusters"] = "Engage consumers & SME's"
-                v["Super Cluster Number"] = "5"
-                v["Absolute FINAL sub-cluster"] = "17"
+                v["Super Clusters"] = "Access Liquidity"
+                v["Super Cluster Number"] = "2"
+                //v["Absolute FINAL sub-cluster"] = "17"
               }
               if (v["Clusters"] == "P2P Platforms") {
                 v["Absolute FINAL sub-cluster"] = "14.5"
+              }
+              if (v["Clusters"] == "Trade Straight Through Processing") {
+                v["Absolute FINAL sub-cluster"] = "12.5"
               }
             })
 
