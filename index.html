@@ -1581,7 +1581,6 @@
           "EduardoData - EngieRadar-Definitions.csv"
           ).then(function(desc) {
 
-            console.log(data)
           var transform = d3.geoTransform({ point: projectPoint }),
             path = d3.geoPath().projection(transform);
             
@@ -1677,8 +1676,12 @@
 
             data.forEach(function(v) {
               if (v["Clusters"] == "Alt debt, loans & SME financing") {
-                v["Super Clusters"] = "Engage consumers & SMEs"
+                v["Super Clusters"] = "Engage consumers & SME's"
                 v["Super Cluster Number"] = "5"
+                v["Absolute FINAL sub-cluster"] = "17"
+              }
+              if (v["Clusters"] == "P2P Platforms") {
+                v["Absolute FINAL sub-cluster"] = "14.5"
               }
             })
 
@@ -2716,7 +2719,6 @@
               .sort(function(a, b) {
                 var a_val = +a.values[0].values[0]['Super Cluster Number']
                 var b_val = +b.values[0].values[0]['Super Cluster Number']
-                console.log('original a_val ', a_val)
                 if (a_val == 5) {
                   a_val = 1
                 } else {
@@ -2731,8 +2733,6 @@
                     b_val = 5
                   }
                 }
-                console.log('after a_val ', a_val)
-                console.log('---')
                 return d3.ascending(a_val, b_val)
               })
 
@@ -2743,6 +2743,10 @@
             tempOrder.forEach(function(v) {
               themeOrder.push(v.key)
               v.values.sort(function(a, b) {
+                console.log('a', a)
+                console.log("+a.values[0]['Absolute FINAL sub-cluster']", +a.values[0]['Absolute FINAL sub-cluster'])
+                console.log('b', b)
+                console.log("+b.values[0]['Absolute FINAL sub-cluster']", +b.values[0]['Absolute FINAL sub-cluster'])
                 return d3.ascending(+a.values[0]['Absolute FINAL sub-cluster'], +b.values[0]['Absolute FINAL sub-cluster'])
               })
               v.values.forEach(function(w) {
@@ -5777,7 +5781,6 @@
             function save_split() {
               //for (let i = 0; i < chartPieData.length; i++) {
                 for (let i = 0; i < 0; i++) {
-                console.log(chartPieData[i].data.value.key.replace(/[\])}[{(]/g, '').replace(/ /g, "-").replace(/,/g, '').replace(/&/g, "and"))
                 setTimeout(function() {
                   var selection =
                     "#background-segment-" +
@@ -5808,14 +5811,10 @@
                       .getBoundingClientRect()
   
                     var tmp_angle = (6.283/chartPieData.length)*(i+1)
-                    console.log('i', i)
-                    console.log('tmp_angle', tmp_angle)
                     var adj = outerRadius * Math.cos(tmp_angle)
                     var opp = outerRadius * Math.sin(tmp_angle)
                     var adjR = (innerRadius+110) * Math.cos(tmp_angle)
                     var oppR = (innerRadius+110) * Math.sin(tmp_angle)
-                    console.log('adj', adj)
-                    console.log('opp', opp)
                     var quad = 3
                     var hor = 0
                     var ver = 50
