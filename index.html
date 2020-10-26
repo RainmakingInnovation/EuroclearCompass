@@ -2855,8 +2855,6 @@
 
                 options.unshift({Startup: ""})
 
-                console.log(options)
-
                 d3.select(".js-example-basic-single")
                   .selectAll("option")
                   .data(options.sort(function(a, b) {
@@ -5944,17 +5942,20 @@
                   }
 
                   nodes.attr("opacity", function (v) {
-                    if (v["Funding Stage"] === startup_data["Funding Stage"]) {
+                    if (v["Startup"] === startup_data["Startup"]) {
                       return 1;
                     } else {
                       return 0.3;
                     }
                   });
-                  if (startup_data["Funding Stage"] === "Acquired") {
-                    nodes_acquired.attr("opacity", 1);
-                  } else {
-                    nodes_acquired.attr("opacity", 0.3);
-                  }
+
+                  nodes_acquired.attr("opacity", function (v) {
+                    if (v["Startup"] === startup_data["Startup"]) {
+                      return 1;
+                    } else {
+                      return 0.3;
+                    }
+                  });
 
                   d3.select(".node-tooltip").style(
                     "transform",
